@@ -1,0 +1,41 @@
+:root {
+  --primary: #409eff;
+  --primary-d: #337ecc;
+  --success: #67c23a;
+  --warning: #e6a23c;
+  --danger:  #f56c6c;
+
+  --side: #304156;
+  --side-hover: #263445;
+  --side-text: #bfcbd9;
+  --side-brand: #2b3648;
+
+  --text-1: #303133;
+  --text-2: #606266;
+  --text-3: #909399;
+  --border: #dcdfe6;
+  --border-l: #ebeef5;
+  --fill: #f5f7fa;
+  --bg: #f0f2f5;
+
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
+  --sp-4: 16px; --sp-5: 20px; --sp-6: 24px;
+
+  --radius: 4px;
+  --side-w: 210px;
+}
+
+/* 清零 */
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p { margin: 0; }
+a { text-decoration: none; color: inherit; }
