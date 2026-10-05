@@ -1,21 +1,24 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 </script>
 
 <template>
-  <div class="layout">
-    <aside class="side">
-      <div class="brand">后台数据看板</div>
-      <nav class="nav"> 
-        <RouterLink class="item" to="/users">用户管理</RouterLink>
-        <RouterLink class="item" to="/dashboard">数据概览</RouterLink>
-      </nav>
-    </aside>
+  <el-config-provider :locale="zhCn">
+    <div class="layout">
+      <aside class="side">
+        <div class="brand">后台数据看板</div>
+        <nav class="nav"> 
+          <RouterLink class="item" to="/users">用户管理</RouterLink>
+          <RouterLink class="item" to="/dashboard">数据概览</RouterLink>
+        </nav>
+      </aside>
 
-    <main class="main">
-      <RouterView/>
-    </main>
-  </div>
+      <main class="main">
+        <RouterView/>
+      </main>
+    </div>
+  </el-config-provider>
 </template>
 
 <style scoped>
@@ -40,6 +43,7 @@ import { RouterLink, RouterView } from 'vue-router';
 .main { 
   background: var(--bg); 
   padding: var(--sp-5); 
+  min-width: 0;
 }
 .nav{
   display: flex;
