@@ -54,7 +54,7 @@ async function load(){
     users.value = res.list
     total.value = res.total
     }catch{
-        err.value = '出错了..再试试'
+        err.value = '出错了，请稍后重试。'
         users.value = []
 
     }finally{
@@ -112,7 +112,7 @@ async function onDelete(row:User){
         await deleteUser(row.id)
         ElMessage.success('删除成功')
     }catch{
-        ElMessage.error('删除失败,请刷新后重试！')
+        ElMessage.error('删除失败，请刷新后重试。')
         await load()
     }
 }
@@ -190,7 +190,7 @@ onUnmounted(()=>clearTimeout(timer))
         </div>
         <el-table v-loading="loading" :data="users" border style="width: 100%;" @selection-change="onSelectionChange">
             <template #empty>
-                <p class="empty">没有符合条件得用户，换个条件试试？</p>
+                <p class="empty">没有符合条件的用户，换个条件试试。</p>
             </template>
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id"  label="ID" width="80"></el-table-column>
@@ -210,7 +210,7 @@ onUnmounted(()=>clearTimeout(timer))
             <el-table-column label="操作" width="140">
                 <template #default="scope">
                     <el-button link type="primary" @click="openEdit(scope.row)">编辑</el-button>
-                    <el-popconfirm title="你确定要删掉这一行吗?" @confirm="onDelete(scope.row)">
+                    <el-popconfirm title="你确定要删掉这一行吗？" @confirm="onDelete(scope.row)">
                         <template #reference>
                             <el-button link type="danger">删除</el-button>
                         </template>
