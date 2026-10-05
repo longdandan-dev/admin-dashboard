@@ -6,16 +6,29 @@ export interface UserPage {
   total: number
 }
 
-export async function fetchUsers(page: number, limit: number): Promise<UserPage> {
-    await new Promise((r) => setTimeout(r, 300))
+export interface UserQuery {
+    name?:string
+    status?:string
+}
+export async function fetchUsers(page:number, limit:number, query:UserQuery = {}):Promise<UserPage>{
+    await new Promise((r)=> setTimeout(r,300))
+
+    const name = (query.name ?? '').trim()
+    const status = query.status ?? ''
+
+    let list = users
+    if(name)list = list.filter((u)=> u.name.includes(name))
+    if(status)list = list.filter((u)=>u.status === status)
+
     const start = (page - 1) *limit
-    const end = page * limit
-    
-    return {
-        list:users.slice(start,end),
-        total:users.length,
+    const end = page *limit
+
+    return{
+        list: list.slice(start,end),
+        total:list.length
     }
 }
+
 // 把当前时间格式化成年月日时分（和现有数据一个格式）
 function nowText(){
     const d = new Date()

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref,onMounted,watch } from 'vue'
+import { ref,onMounted,watch, onUnmounted, nextTick } from 'vue'
 import { type User,type Role,type UserStatus } from '../data/users'
 import { fetchUsers, createUser, updateUser, deleteUser   } from '../api/user'
 import { reactive, computed } from 'vue'
 import { type FormRules, type FormInstance, ElMessage, ElMessageBox } from 'element-plus'
+
+let timer: ReturnType<typeof setTimeout> | undefined
 
 const page = ref(1)
 const users = ref<User[]>([])
@@ -12,6 +14,8 @@ const pageSize = ref(10)
 const loading = ref(false)
 const err = ref('')
 const dialogVisible = ref(false)
+const keyword = ref('')
+const statusFilter = ref('all')
 interface UserForm {
     name:string
     email:string
@@ -43,7 +47,10 @@ async function load(){
     loading.value = true
     err.value = ''
     try{
-    const res = await fetchUsers(page.value,pageSize.value)
+    const res = await fetchUsers(page.value,pageSize.value,{
+        name:keyword.value,
+        status: statusFilter.value === 'all' ? '' :statusFilter.value,
+    })
     users.value = res.list
     total.value = res.total
     }catch{
@@ -133,19 +140,58 @@ async function onBatchDelete(){
         await load()
     }
 }
+function onSearch(){
+    runQuery(true)
+}
+async function onRest(){
+    keyword.value = ''
+    statusFilter.value = 'all'
+    await nextTick()
+    runQuery(true)
+}
+function loadFromFirstPage(){
+    if(page.value === 1)load()
+    else page.value = 1
+}
+function runQuery(immediate = false){
+    clearTimeout(timer)
+    if(immediate){
+        loadFromFirstPage()
+    }else{
+        timer = setTimeout(loadFromFirstPage,300)
+    }
+}
 onMounted(load)
 watch(page,load)
+watch(keyword,()=>runQuery())
+onUnmounted(()=>clearTimeout(timer))
 </script>
 
 <template>
     <section class="page">
         <h2>用户管理</h2>
         <p v-if="err" class="err">{{  err }}</p>
+        <div class="filters">
+            <span class="filter-label">姓名</span>
+            <el-input v-model="keyword" placeholder="请输入姓名" clearable style="width: 160px;"></el-input>
+            <span class="filter-label">状态</span>
+            <el-select v-model="statusFilter" placeholder="全部" style="width: 130px;">
+                <el-option label="全部" value="all"></el-option>
+                <el-option label="正常" value="正常"></el-option>
+                <el-option label="待审核" value="待审核"></el-option>
+                <el-option label="已停用" value="已停用"></el-option>
+            </el-select>
+            <el-button type="primary" @click="onSearch">查询</el-button>
+            <el-button @click="onRest">重置</el-button>
+        </div>
         <div class="toolbar">
             <el-button type="primary" @click="openCreate" >  新增用户</el-button>
             <el-button type="danger" @click="onBatchDelete" :disabled="selected.length === 0">批量删除{{ selected.length }}</el-button>
         </div>
         <el-table v-loading="loading" :data="users" border style="width: 100%;" @selection-change="onSelectionChange">
+            <template #empty>
+                <p class="empty">没有符合条件得用户，换个条件试试？</p>
+            </template>
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id"  label="ID" width="80"></el-table-column>
             <el-table-column prop="name"  label="姓名" width="120"></el-table-column>
@@ -227,5 +273,20 @@ watch(page,load)
   display: flex;
   justify-content: flex-end;   
   margin-bottom: var(--sp-3);  
+}
+.filters{
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-3);
+}
+.filter-label{
+    font-size: 13px;
+    color: var(--text-2);
+}
+.empty{
+    color: var(--text-3);
+    font-size: 13px;
+    padding: var(--sp-4) 0;
 }
 </style>
