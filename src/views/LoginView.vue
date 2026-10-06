@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { loginApi } from '../api/auth';
 import { setToken } from '../utils/token';
+import { useUserStore } from '../stores/user';
 
 const username = ref('')
 const password = ref('')
 const router = useRouter()
+const userStore = useUserStore()
 
 async function onLogin(){
     if(!username.value || !password.value) 
@@ -16,6 +18,7 @@ async function onLogin(){
         const token = await loginApi(username.value, password.value)
         setToken(token)
         ElMessage.success('登录成功')
+        userStore.setUser(username.value)
         router.push('/users')
     }catch{
         ElMessage.error('登录失败')
