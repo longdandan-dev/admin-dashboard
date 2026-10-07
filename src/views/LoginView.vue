@@ -44,7 +44,7 @@ async function onLogin(){
 .login-page {
   min-height: 100vh;
   display: grid;
-  place-items: center;   /* 横竖都居中：等价于"两个方向都居中" */
+  place-items: center;   
   background: var(--bg);
 }
 .login-card {

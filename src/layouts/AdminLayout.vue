@@ -8,6 +8,7 @@ import { useRouter } from 'vue-router';
 import { clearToken } from '../utils/token';
 
 const pwdVisible = ref(false)
+const sideOpen = ref(false)          // M7-4c：窄屏抽屉菜单的开关（≤900px 才用得到）
 const pwdFormRef = ref()
 const pwdForm = reactive({oldPwd:'', newPwd:'', confirmPwd:''})
 const userStore = useUserStore()
@@ -61,16 +62,19 @@ async function onSubmitPwd(){
 
 <template>
     <div class="layout">
-        <aside class="side">
+        <aside class="side" :class="{ open: sideOpen }">
             <div class="brand">后台数据看板</div>
             <nav class="nav">
-                <RouterLink class="item" to="/users">用户管理</RouterLink>
-                <RouterLink class="item" to="/dashboard">数据概览</RouterLink>
+                <RouterLink class="item" to="/users" @click="sideOpen = false">用户管理</RouterLink>
+                <RouterLink class="item" to="/dashboard" @click="sideOpen = false">数据概览</RouterLink>
             </nav>
         </aside>
 
+        <div v-if="sideOpen" class="mask" @click="sideOpen = false"></div>
+
         <div class="content">
             <header class="topbar">
+                <button class="hamburger" type="button" aria-label="打开菜单" @click="sideOpen = true">☰</button>
                 <el-dropdown @command="onCommand">
                     <span class="user-chip">
                         <el-avatar :size="28">管</el-avatar>
@@ -87,7 +91,7 @@ async function onSubmitPwd(){
             </header>
         
             <el-dialog v-model="pwdVisible" title="修改密码" width="420px">
-                <el-form ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="90px"> 
+                <el-form ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="110px">
                     <el-form-item label="原密码" prop="oldPwd">
                         <el-input v-model="pwdForm.oldPwd" type="password" show-password></el-input>
                     </el-form-item>
@@ -144,15 +148,18 @@ async function onSubmitPwd(){
   align-items: center;
   height: 46px; 
   padding-left: 20px; 
-  font-size: 14px;
+  font-size: var(--fs-md);
+  transition: background-color var(--tr), color var(--tr);
 }
 .item:hover { 
     background-color: var(--side-hover); 
     color: #fff; 
 }
+.item.active,
 .item.router-link-active { 
-    background-color: var(--primary); 
+    background-color: var(--primary-d);    /* M7-4：白字压 #409eff 只有 2.78:1 → 换深一档蓝 */
     color: #fff; 
+    font-weight: 700;                       /* 加粗进"大字"档：门槛从 4.5 降到 3（实测 4.20 达标） */
     }
 .content{
     display: flex;
@@ -175,7 +182,60 @@ async function onSubmitPwd(){
     cursor: pointer;
 }
 .user-name{
-    font-size: 14px;
+    font-size: var(--fs-md);
+}
+/* M7-4：头像默认底色是浅灰 #c0c4cc，白字压上去只有 1.75:1 → 换成侧栏深色（10.4:1） */
+.user-chip :deep(.el-avatar){
+    background: var(--side);
+}
+
+/* ── 三档适配（M7-4c）：≤900px 侧栏改抽屉 + 汉堡按钮 ── */
+.hamburger{
+    display: none;                        /* 桌面不显示 */
+}
+.mask{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .35);
+    z-index: 20;
+}
+@media (min-width: 901px){
+    .mask{ display: none; }               /* 桌面永远不用遮罩 */
+}
+
+@media (max-width: 900px){
+    .layout{ grid-template-columns: 1fr; }          /* 侧栏脱离文档流，内容占满 */
+    .side{
+        position: fixed;
+        inset: 0 auto 0 0;                          /* 贴左、满高 */
+        width: var(--side-w);
+        z-index: 30;
+        transform: translateX(-100%);               /* 默认藏起来 */
+        transition: transform var(--tr);
+    }
+    .side.open{ transform: none; }                  /* 点汉堡 → 滑出来 */
+
+    .hamburger{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        margin-right: auto;                         /* 把它顶到顶栏左边 */
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: #fff;
+        color: var(--text-1);
+        font-size: var(--fs-md);
+        line-height: 1;
+        cursor: pointer;
+        transition: border-color var(--tr), color var(--tr);
+    }
+    .hamburger:hover{ border-color: var(--primary); color: var(--primary); }
+    .hamburger:focus-visible{ outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .topbar{ padding: 0 var(--sp-3); }
+    .main{ padding: var(--sp-3); }
 }
 
 </style>

@@ -21,7 +21,15 @@
   --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
   --sp-4: 16px; --sp-5: 20px; --sp-6: 24px;
 
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 18px;
+  --fs-xl: 28px;
+
   --radius: 4px;
+  --radius-sm: 2px;
+  --tr: 0.2s ease;          /* 统一过渡时长 */
   --side-w: 210px;
 }
 

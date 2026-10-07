@@ -261,12 +261,12 @@ onUnmounted(()=>clearTimeout(timer))
     padding: 4px;
 }
 .tip{
-    color:#909399;
-    font-size: 13px;
+    color: var(--text-2);          
+    font-size: var(--fs-sm);
 }
 .err{
   color: var(--danger);     
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin-bottom: var(--sp-2);
 }
 .toolbar {
@@ -281,12 +281,26 @@ onUnmounted(()=>clearTimeout(timer))
     margin-bottom: var(--sp-3);
 }
 .filter-label{
-    font-size: 13px;
+    font-size: var(--fs-sm);
     color: var(--text-2);
+    white-space: nowrap;          
 }
 .empty{
-    color: var(--text-3);
-    font-size: 13px;
+    color: var(--text-2);          
+    font-size: var(--fs-sm);
     padding: var(--sp-4) 0;
+}
+
+@media (max-width: 900px) {
+  .page { overflow-x: auto; }
+  .filters { flex-wrap: wrap; }    
+}
+
+.page :deep(.el-table th.el-table__cell > .cell){
+    color: var(--text-2);                 
+}
+
+.page :deep(.el-pager li.is-active){
+    color: var(--primary-d);              
 }
 </style>
