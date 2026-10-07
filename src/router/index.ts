@@ -7,7 +7,11 @@ import LoginView from "../views/LoginView.vue";
 import { getToken } from "../utils/token";
 
 const router = createRouter({
-    history: createWebHistory(),
+    // ⚠️ 必须带 base（M7-5 上线时踩到的坑）：
+    //    线上部署在 /admin-dashboard/ 子路径下，而 Vite 会把配置里的 base 注入成 import.meta.env.BASE_URL
+    //    （dev → '/'，打包 → '/admin-dashboard/'）。
+    //    不写它的话：F5 或用深链接进来时，路由会把 '/admin-dashboard/users' 当成未知路径 → 落到兜底 404 页（白板）。
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes:[
         {
             path:'/login',
