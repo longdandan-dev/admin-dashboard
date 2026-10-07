@@ -30,7 +30,7 @@ async function onLogin(){
     <div class="login-page">
         <div class="login-card">
             <h1 class="title">后台数据看板</h1>
-            <p class="sub">请登录后使用</p>
+            <p class="sub">请登录后使用（账号：admin 密码：123456）</p>
 
             <el-input v-model="username" placeholder="请输入用户名" size="large" clearable></el-input>
             <el-input v-model="password" type="password" placeholder="请输入密码" size="large"  show-password></el-input>
